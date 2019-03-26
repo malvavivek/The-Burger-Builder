@@ -2,6 +2,8 @@ import React,{Component} from 'react';
 import Aux from '../../hoc/auxiliary';
 import Burger from "../../components/Burger/Burger";
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
+import Modal from '../../components/UI/Modal/Modal';
+import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary'
 const INGREDIANT_PRICES = {
     salad:0.5,
     meat:1.5,
@@ -17,7 +19,8 @@ class BurgerBuilder extends Component {
             bacon:0
         },
         price:2,
-        purchaseable:false
+        purchaseable:false,
+        ordered:false
     }
     updatePurchaseState = (ingrediants)=>{
         // const ingrediants = {...this.state.ingrediants}
@@ -53,6 +56,12 @@ class BurgerBuilder extends Component {
         
         
     }
+    modalShowHandler = ()=>{
+        this.setState({ordered:true})
+    }
+    purchaseCancelHandler =()=>{
+        this.setState({ordered:false})
+    }
     render(){
         const disabledInfo = {
             ...this.state.ingrediants
@@ -63,13 +72,19 @@ class BurgerBuilder extends Component {
         }
         return(
         <Aux>
+            <Modal show={this.state.ordered}
+                modalClosed={this.purchaseCancelHandler}>
+                <OrderSummary ingrediants={this.state.ingrediants}
+                ordered/>
+             </Modal>
            <Burger ingrediants={this.state.ingrediants}/>
             <BuildControls 
             ingrediantAdded = {this.addIngrediantHandler} 
             ingrediantDeleted={this.removeIngrediantHandler}
             disabled={disabledInfo}
             price={this.state.price}
-            purchaseable={this.state.purchaseable}/>
+            purchaseable={this.state.purchaseable}
+            isOrdered={this.modalShowHandler}/>
         </Aux>
         )  
     }
